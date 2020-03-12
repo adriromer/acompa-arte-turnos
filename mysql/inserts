@@ -1,0 +1,4 @@
+
+INSERT INTO terapistas(terpista_id,status)
+VALUES('001',1);
+

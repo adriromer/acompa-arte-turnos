@@ -1,0 +1,9 @@
+add colunms
+
+ALTER TABLE terapistas ADD apellido TEXT;
+
+move colunms
+
+ALTER TABLE terapistas MODIFY COLUMN status TINYINT AFTER apellido;
+
+ALTER TABLE terapistas RENAME COLUMN primer_nombre TO first_name;

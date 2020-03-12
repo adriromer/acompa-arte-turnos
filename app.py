@@ -4,6 +4,7 @@ from flask import json
 from flask import request
 from flask import abort
 import doctors
+
 import logging
 
 app = Flask(__name__)
@@ -40,5 +41,5 @@ def api_appointments():
 
 if __name__ == '__main__':
 
-    print(doc_data.get_doctors())
+#    print(doc_data.get_doctors())
     app.run(debug=True)

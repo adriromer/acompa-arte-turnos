@@ -1,7 +1,7 @@
 '''This module stores doctor data and provides methods for GET, POST and DELETE calls.
 '''
 from random import randint
-
+import mysql.connector
 
 class DoctorData(object):
     """Class holds all data and provides functions for the HTTP requests.
@@ -25,27 +25,60 @@ class DoctorData(object):
         get_appointment: A function to return all appointments of a doctor for a given date.
         del_appointment: A function to delete an appointment.
     """
+
     def __init__(self):
         '''
         Adding sample doctors
         '''
-        self.doctors = dict() # Key: Doc_ID Value: DoctorInfo()
+        self.doctors = dict()  # Key: Doc_ID Value: DoctorInfo()
+
 #        llamado de la funcion para popular terapistas de manera automatica
-#        self.add_doctor('emanuel', 'rolon')
-#        self.add_doctor('sigmund', 'freud')
+
+        self.add_doctor('sigmund', 'freud')
+
+    #    print(self.doctors)
+    #   print(self.doctors.items())
+    #    print(dict.items())
+
+
+    def populate_doctorid_from_db(self):
+        connection = mysql.connector.connect(host='127.0.0.1',
+                                             database='acompadb',
+                                             user='root',
+                                             password='adrian')
+
+        sql_select_Query = "select terapista_id from terapistas"
+        cursor = connection.cursor(buffered=True)
+        cursor.execute(sql_select_Query)
+        ids = []
+        allrecords = cursor.fetchall()
+        for i in allrecords:
+            k = list(i)
+            ids.append(k[0])
+        return ids
+
+
 
     def add_doctor(self, first_name, last_name):
         """Adds new doctor to to doctors dict() with a unique id. """
-        doc_id = randint(1, 999)
+        doc_id = str(self.populate_doctorid_from_db())
         self.doctors[doc_id] = DoctorInfo(first_name, last_name)
+
 
     def get_doctors(self):
         """Retrieves list of all doctors."""
-        return [{doc[0]: {"first_name": doc[1].first_name, "last_name":doc[1].last_name}} for doc in self.doctors.items()]
+
+        print([{doc[0]: {"first_name": doc[1].first_name, "last_name": doc[1].last_name}} for doc in
+                self.doctors.items()])
+
+        print(self.doctors.items())
+
+        return [{doc[0]: {"first_name": doc[1].first_name, "last_name": doc[1].last_name}} for doc in
+                self.doctors.items()]
 
     def add_appointment(self, json_data):
-        """ Adds new appointment to the data 
-            
+        """ Adds new appointment to the data
+
             Args:
                 json_data: A dict() of all relevant data needed for appointment. For example:
                            {"doc_id":1132, "date": "09/25/1992", "time": "10:30", "kind":"New Patient",
@@ -71,7 +104,7 @@ class DoctorData(object):
             raise KeyError("Invalid Doc_ID")
         doctor = self.doctors[int(doc_id)]
         appointments = doctor.get_appointments(date)
-        return [ {str(appointment[0]):str(appointment[1])} for appointment in appointments.items()]
+        return [{str(appointment[0]): str(appointment[1])} for appointment in appointments.items()]
 
     def del_appointment(self, doc_id, date, apt_id):
         """ Deletes an appointment specified by doctor id, appointment id and date"""
@@ -79,7 +112,7 @@ class DoctorData(object):
             raise KeyError("Invalid Doc_ID")
         doctor = self.doctors[int(doc_id)]
         return doctor.del_appointment(date, apt_id)
-         
+
 
 class DoctorInfo(object):
     """Class holds all the data of a doctor.
@@ -93,14 +126,15 @@ class DoctorInfo(object):
         get_appointment: A function to return all appointments for a given date.
         del_appointment: A function to delete an appointment.
     """
+
     def __init__(self, first_name, last_name):
         self.first_name = first_name
         self.last_name = last_name
-        self.dates = dict() # Key: Date Value: DateInfo()
+        self.dates = dict()  # Key: Date Value: DateInfo()
 
     def add_appointment(self, date, time, apt_id, apt_data):
         '''
-        Retrieve Date Info for the particular date for the doctor and add appointment 
+        Retrieve Date Info for the particular date for the doctor and add appointment
         '''
         if date not in self.dates:
             self.dates[date] = DateInfo()
@@ -120,14 +154,14 @@ class DoctorInfo(object):
             raise KeyError("Given appointment date doesn't exist")
         date_info = self.dates[date]
         return date_info.del_appointment(apt_id)
-        
+
 
 class DateInfo(object):
-    """Class holds all the data of a particular date. 
-    
+    """Class holds all the data of a particular date.
+
     Attributes:
         appointments: All the appointments. Key: Appointment_ID Value: Appointment()
-        booked: A dict() that keeps track of booked slots. Assuming GUI provides a fixed 
+        booked: A dict() that keeps track of booked slots. Assuming GUI provides a fixed
                 set of slots (Example: Every hour)
         dates: all the dates the doctor has appointments.
         add_appointment: A function to add a new appointment.
@@ -135,8 +169,8 @@ class DateInfo(object):
     """
 
     def __init__(self):
-        self.appointments = dict() # Key: Appointment_ID Value: Appointment()
-        self.booked = dict() # Key: Time Value: True
+        self.appointments = dict()  # Key: Appointment_ID Value: Appointment()
+        self.booked = dict()  # Key: Time Value: True
 
     def __str__(self):
         return str([str(appointment) for appointment in self.appointments.items()]) + str(self.booked.items())
@@ -158,14 +192,16 @@ class DateInfo(object):
         del self.booked[apt_time]
         return "Appointment deleted."
 
+
 class Appointment(object):
     """Class holds all the data of an appointment. """
+
     def __init__(self, patient_first_name, patient_last_name, date, time, kind):
         self.patient_first_name = patient_first_name
         self.patient_last_name = patient_last_name
         self.date = date
         self.time = time
         self.kind = kind
-    
+
     def __str__(self):
         return str(self.__dict__)
