@@ -1,6 +1,7 @@
-'''This module stores doctor data and provides methods for GET, POST and DELETE calls.   
+'''This module stores doctor data and provides methods for GET, POST and DELETE calls.
 '''
 from random import randint
+
 
 class DoctorData(object):
     """Class holds all data and provides functions for the HTTP requests.
@@ -10,7 +11,7 @@ class DoctorData(object):
     are initialized in init for simplicity/scope.
 
     The data is stored as follows:
-    Doctor Data = { Doctor_ID : DoctorInfo}
+    Doctor Data = { terapista_id : DoctorInfo}
     DoctorInfo = { first name, last name,  dates}
     dates = { date: DateInfo}
     DateInfo = { Appointments, booked}
@@ -29,12 +30,13 @@ class DoctorData(object):
         Adding sample doctors
         '''
         self.doctors = dict() # Key: Doc_ID Value: DoctorInfo()
-        self.add_doctor('John', 'Doe')
-        self.add_doctor('Jane', 'Doe')
+#        llamado de la funcion para popular terapistas de manera automatica
+#        self.add_doctor('emanuel', 'rolon')
+#        self.add_doctor('sigmund', 'freud')
 
     def add_doctor(self, first_name, last_name):
         """Adds new doctor to to doctors dict() with a unique id. """
-        doc_id = randint(1, 9999)
+        doc_id = randint(1, 999)
         self.doctors[doc_id] = DoctorInfo(first_name, last_name)
 
     def get_doctors(self):
