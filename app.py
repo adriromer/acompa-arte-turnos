@@ -12,6 +12,7 @@ doc_data = doctors.DoctorData()
 
 @app.route('/doctors', methods = ['GET'])
 def api_doctors():
+
 #   Api que devuelve la lista de todos los terapistas
     return json.dumps(doc_data.get_doctors())
 
@@ -28,7 +29,6 @@ def api_appointments():
     """ API to GET, POST and DELETE appointments. """
     try:
         if (request.method == 'POST' and request.headers['Content-Type'] == 'application/json'):
-            print(request.json)
             return json.dumps(doc_data.add_appointment(request.json))
         elif request.method == 'GET':
             app.logger.info(request.json)

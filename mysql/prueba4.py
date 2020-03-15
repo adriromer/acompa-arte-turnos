@@ -18,10 +18,14 @@ doctors = dict()
 read_dbterapistas()
 
 
-def read_dbterapistas(first_name, last_name):
-   """Adds new doctor to to doctors dict() with a unique id. """
-    doc_id = randint(1, 999)
-    self.doctors[doc_id] = DoctorInfo(first_name, last_name)
+def get_doctors(self):
+    """Retrieves list of all doctors."""
 
+    print([{doc[0]: {"first_name": doc[1].first_name, "last_name": doc[1].last_name}} for doc in
+           self.doctors.items()])
+    print(self.doctors.items())
+
+    return [{doc[0]: {"first_name": doc[1].first_name, "last_name": doc[1].last_name}} for doc in
+            self.doctors.items()]
 
 
